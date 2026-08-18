@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, CalendarDays, BookMarked, Users, Settings, Building2 } from 'lucide-react';
+import { LayoutDashboard, CalendarDays, BookMarked, Users, Settings, Building2, X } from 'lucide-react';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }) => {
   const { user } = useAuth();
 
   const navItems = [
@@ -24,17 +24,30 @@ const Sidebar = () => {
     }`;
 
   return (
-    <aside className="bg-white w-64 border-r border-gray-200 hidden md:flex flex-col h-screen shrink-0">
-      <div className="h-16 flex items-center px-6 border-b border-gray-200">
-        <h1 className="text-2xl font-bold text-indigo-600 tracking-tight">Campus<span className="text-slate-800">Venue</span></h1>
-      </div>
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={onClose}
+        />
+      )}
+      
+      {/* Sidebar */}
+      <aside className={`bg-white w-64 border-r border-gray-200 flex flex-col h-screen shrink-0 fixed md:static inset-y-0 left-0 z-50 transform transition-transform duration-300 ease-in-out md:transform-none ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="h-16 flex items-center justify-between px-6 border-b border-gray-200">
+          <h1 className="text-2xl font-bold text-indigo-600 tracking-tight">Campus<span className="text-slate-800">Venue</span></h1>
+          <button onClick={onClose} className="md:hidden text-gray-400 hover:text-gray-600 p-2 -mr-2">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
       
       <div className="flex-1 overflow-y-auto py-6 px-3 flex flex-col gap-1">
         <div className="px-3 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
           Main Menu
         </div>
         {navItems.map((item) => (
-          <NavLink key={item.name} to={item.path} className={linkClass}>
+          <NavLink key={item.name} to={item.path} className={linkClass} onClick={onClose}>
             <item.icon className="w-5 h-5" />
             {item.name}
           </NavLink>
@@ -46,7 +59,7 @@ const Sidebar = () => {
               Admin
             </div>
             {adminItems.map((item) => (
-              <NavLink key={item.name} to={item.path} className={linkClass}>
+              <NavLink key={item.name} to={item.path} className={linkClass} onClick={onClose}>
                 <item.icon className="w-5 h-5" />
                 {item.name}
               </NavLink>
@@ -55,6 +68,7 @@ const Sidebar = () => {
         )}
       </div>
     </aside>
+    </>
   );
 };
 
